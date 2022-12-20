@@ -1,83 +1,67 @@
-import matplotlib
-import tensorflow as tf
-import tensorflow.keras
+import random
 
-# библиотека для вывода изображений
-import matplotlib.pyplot as plt
+import numpy as np
 
-# -- Импорт для построения модели: --
-# импорт слоев
-from tensorflow.keras import layers
-from tensorflow.keras.layers import Dense, Flatten
-# импорт модели
-from tensorflow.keras.models import Sequential
-# импорт оптимайзера
-from tensorflow.keras.optimizers import Adam
 
-# Импортируем набор данных MNIST
-from tensorflow.keras.datasets import mnist
+# 3 на 5
 
-# загружаем тренировочные и тестовые данные
-(X_train, y_train), (X_test, y_test) = mnist.load_data()
+class Neural:
+    def __init__(self, inputs, weight, step, answers, last_error, epochs):
+        self.inputs = inputs
+        self.weight = weight
+        self.step = step
+        self.answers = answers
+        self.last_error = last_error
+        self.epochs = epochs
+        self.t = 0
 
-# Узнаем длины полученных массивов
-print(len(X_train), len(y_train), len(X_test), len(y_train))
+    def train(self):
+        for eph in range(self.epochs):
+            for count in range(len(self.inputs)):
+                self.summ_to_active = 0
+                for i in range(len(self.inputs[count])):
+                    self.summ_to_active += self.inputs[count][i] * self.weight[i]
+                self.summ_to_active -= self.t
+                if self.summ_to_active >= 0:
+                    self.summ_to_active = 1
+                else:
+                    for i in range(len(self.weight)):
+                        print(self.weight)
+                        print(self.step * self.inputs[count][i] * self.answers[count])
+                        print('----------------')
+                        self.weight[i] = round(self.weight[i] + self.step * self.inputs[count][i] * self.answers[count],
+                                               5)
+                    self.t = self.t - self.answers[count]
 
-# Проверка типа и размера данных
-print(X_train[0].shape, X_train[0].dtype)
+    def start(self, new_value):
+        self.train()
+        print('Веса -', self.weight)
+        final_answer = 0
+        for i in range(len(new_value)):
+            final_answer += new_value[i] * self.weight[i]
+        final_answer -= self.t
 
-# Выведем первый элемент массива на экран
-print(X_train[0])
-
-print(y_train[0])
-
-# Выведем на экран хранящееся в X_train[0] изображение
-plt.imshow(X_train[0], cmap='binary')
-plt.axis('off')
-
-# Преобразование данных в матрицах изображений
-# X_train.max() возвращает значение 255
-X_train = X_train/X_train.max()
-X_test = X_test/X_test.max()
-
-# Преобразуем целевые значения методом «one-hot encoding»
-y_train = tensorflow.keras.utils.to_categorical(y_train, 10)
-y_test = tensorflow.keras.utils.to_categorical(y_test, 10)
-
-model = Sequential([
-    layers.Dense(32, activation='relu', input_shape=(X_train[0].shape)),
-    layers.Dense(64, activation='relu'),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(256, activation='relu'),
-    layers.Dense(512, activation='relu'),
-    layers.Flatten(),
-    layers.Dense(10, activation='sigmoid')
-])
-# Выведем полученную модель на экран
-model.summary()
-
-#Компиляция модели
-model.compile(loss='binary_crossentropy',
-            optimizer = Adam(lr=0.00024),
-             metrics = ['binary_accuracy'])
-
-# Функция ранней остановки
-stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', verbose=1, patience=6)
-
-# Запускаем обучение модели
-history = model.fit(X_train, y_train, batch_size=500, verbose=1,
-                    epochs= 50, validation_split = 0.2, callbacks=[stop])
-
-# Предсказываем результат для тестовой выборки
-pred = model.predict(X_test)
-
-print(pred[0])
-
-for i in range(len(pred)):
-    for j in range(10):
-        if(pred[i][j]>0.5):
-            pred[i][j]=1
+        if final_answer >= 0:
+            final_answer = 1
+            print('Ответ:', final_answer)
         else:
-            pred[i][j]=0
+            print('Ответ:', -1)
 
-print(pred[3], y_test[3])
+
+def random_weight():
+    mass_weigh = []
+    for i in range(15):
+        mass_weigh.append(round(random.random(), 5))
+    return mass_weigh
+
+
+if __name__ == '__main__':
+    last_error = 0
+    step = 0.0001
+    epochs = 100
+    mass_value = [[-1, 1, -1, 1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1],
+                  [-1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1]]
+    mass_answers = [1, 1]
+    brain = Neural(mass_value, random_weight(), step, mass_answers, last_error, epochs)
+    brain.start([-1, 1, -1, 1, 1, -1, -1, 1, -1, -1, 1, -1, -1, 1, -1])
+    # [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1]
