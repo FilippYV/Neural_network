@@ -20,7 +20,7 @@ import tensorflow as tf
 
 # model.save('handwritten.model')
 
-model = tf.keras.models.load_model('handwritten.model')
+model = tf.keras.models.load_model('../handwritten.model')
 
 image_number = 1
 while os.path.isfile(f"digits/digit{image_number}.png"):
