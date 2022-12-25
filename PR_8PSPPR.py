@@ -42,6 +42,9 @@ class Neural:
         for i in range(len(new_value)):
             final_answer += new_value[i] * self.weight[i]
         final_answer -= self.t
+        print(self.inputs)
+        print(self.answers)
+        print(new_value)
         print(final_answer)
 
         if final_answer >= 0:
@@ -77,14 +80,17 @@ if __name__ == '__main__':
                   [1, 1, -1, 1],
                   [1, 1, 1, -1],
                   [1, 1, 1, 1]]
-    mass_answers = [-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 1]
+    mass_answers = [-1, -1, -1, -1, -1, -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, 1]
     brain = Neural(mass_value,
                    random_weight(len(mass_value[0])),
                    step,
                    mass_answers,
                    last_error,
                    epochs)
-    brain.start([1, 1, 1, 1])  # [temro_p_exist, cistem_coolers, cooler_coonect, cooler_dress, termopaste_o]
+    brain.start([0, 1, 1, 1])
+
+
+    # [temro_p_exist, cistem_coolers, cooler_coonect, cooler_dress, termopaste_o]
     # brain = Neural(mass_value, [0.69662, 0.95457, 0.57743, 0.88189, 0.00117], step, mass_answers, last_error, epochs)
     # brain.start_no_train([-1, -1, 1, -1, 1])
     # -1.62392, 1.21987, 0.30287, 4.63544, 2.55954]
